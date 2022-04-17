@@ -52,3 +52,5 @@ Only a fraction of the details is displayed in the Rocket component.
 
 ![Screen Shot](public/spacex.png)
 
+![Responsive](public/spacex-responsive.png)
+
