@@ -9,16 +9,23 @@ import {
   TableCell,
   Paper,
   Container,
+  Button,
+  Popover,
+  Fab,
 } from "@mui/material";
 
 import { fetchSpaceXLaunchData } from "./fetch";
 import PageNavigator from "../../components/PageNavigator";
-import { RocketLaunch } from '@mui/icons-material';
+import { RocketLaunch } from "@mui/icons-material";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
+import NavigationIcon from "@mui/icons-material/Navigation";
+
+import Rocket from "../../components/Rocket";
 
 const Launches = () => {
   const [spaceXLaunches, setSpaceXLaunches] = useState({ docs: [] });
   const [page, setPage] = useState(1);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -39,14 +46,22 @@ const Launches = () => {
   };
 
   const navigateToExternalUrl = (link) => {
-    if(link) {
+    if (link) {
       console.log(link);
       window.open(link);
     }
-  }
+  };
+
+  const showRocketDetails = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const hideRocketDetails = () => {
+    setAnchorEl(null);
+  };
 
   // Convert the UTC date to YYYY
-  const yearFromDate = dateString => new Date(dateString).getUTCFullYear()
+  const yearFromDate = (dateString) => new Date(dateString).getUTCFullYear();
 
   return (
     <Container>
@@ -63,7 +78,7 @@ const Launches = () => {
           </TableHead>
           <TableBody>
             {docs.map((doc) => (
-              <TableRow key={doc.id}>
+              <TableRow key={doc.id} style={{ cursor: "pointer" }}>
                 <TableCell
                   onClick={() => navigateToExternalUrl(doc.links.presskit)}
                 >
@@ -73,14 +88,29 @@ const Launches = () => {
                       style={{ cursor: "pointer" }}
                     />
                   )}
-                  {!doc.links.presskit && (
-                    <DoNotDisturbIcon color="error" />
-                  )}
+                  {!doc.links.presskit && <DoNotDisturbIcon color="error" />}
                 </TableCell>
                 <TableCell>{doc.flight_number}</TableCell>
                 <TableCell>{yearFromDate(doc.date_utc)}</TableCell>
                 <TableCell>{doc.name}</TableCell>
-                <TableCell>{doc.rocket.name}</TableCell>
+                <TableCell>
+                  <Fab variant="extended" color="primary" onClick={showRocketDetails}>
+                    <NavigationIcon sx={{ mr: 1 }} />
+                    {doc.rocket.name}
+                  </Fab>
+                  <Popover
+                    id={doc.rocket.name}
+                    open={Boolean(anchorEl)}
+                    anchorEl={anchorEl}
+                    onClose={hideRocketDetails}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left",
+                    }}
+                  >
+                    <Rocket details={doc.rocket} />
+                  </Popover>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
