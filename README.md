@@ -50,5 +50,5 @@ Only a fraction of the details is displayed in the Rocket component.
     }
 ```
 
-![Screen Shot](./spacex.png)
+![Screen Shot](public/spacex.png)
 
